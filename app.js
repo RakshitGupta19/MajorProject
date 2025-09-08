@@ -49,7 +49,7 @@ const store = MongoStore.create({
     touchAfter: 24 * 3600,
 });
 
-store.on("error", ()=>{
+store.on("error", (err)=>{
     console.log("ERROR in MONGO SESSION STORE", err);
 });
 
@@ -62,6 +62,7 @@ const sessionOptions = {
         expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
+        secure: false
     }
 };
 
@@ -100,11 +101,6 @@ app.get("/demouser", async (req, res) => {
     let registeredUser = await User.register(fakeUser, "helloworld");
     res.send(registeredUser);
 });
-
-app.use("/listings", listingRouter);
-app.use("/listings/:id/reviews", reviewRouter);
-app.use("/", userRouter);
-
 
 app.all("*", (req, res, next) => {
     next(new ExpressError(404, "Page Not Found!"));
